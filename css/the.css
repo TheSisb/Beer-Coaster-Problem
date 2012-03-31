@@ -1,0 +1,32 @@
+@font-face{font-family:"Corbel W01 Regular"; src:url("../fonts/corbelN.woff") format("woff");}
+@font-face{font-family:"Corbel W01 Italic"; src:url("../fonts/corbelI.woff") format("woff");}
+@font-face{font-family:"Corbel W01 Bold"; src:url("../fonts/corbelB.woff") format("woff");}
+@font-face {font-family:'Titan One';src:url('../fonts/titanone.woff') format('woff');}
+
+body {font-family:'Corbel W01 Regular', "Lucida Grande", serif;margin:0;padding:0;font-size:62.5%;background:url(../img/bg.png);}
+#container { width: 820px; margin:20px auto; font-size:2em;line-height:1.5em;}
+.center {text-align:center;position:relative;}
+ol {margin:1em;padding:0;}
+ol li {margin:1.6em 0;}
+
+h1 {font-family:'Titan One';text-shadow:0 1px 1px #999, 0 2px 2px #777;text-align:center;font-weight:900;font-size:2em;line-height:2em;margin-left:-20px;}
+h2 {margin-top:-5px;font-size:1.8em;font-family:'Titan One';color:#55BC8F;text-shadow:0 1px 1px #4c7, 0 2px 2px #000;}
+h3{text-decoration:underline;}
+em {font-family:'Corbel W01 Italic', "Lucida Grande", serif;}
+strong {font-family:'Corbel W01 Bold', "Lucida Grande", serif;}
+pre { font-size:.9em;line-height:1.1em;}
+#problem,#solution,#analysis,#program {margin:15px 0;border-radius:5px;padding:1em;background:#fff;box-shadow: 4px 4px 4px #bbb, -4px 4px 4px #bbb;}
+
+	#c1, #c2 { width:150px; height:150px; display:inline-block; border:1px solid #000;-moz-border-radius: 75px;-webkit-border-radius: 75px;border-radius: 75px;position:relative;}
+	.dot {position:absolute;top:62px;left:67px;line-height:1em}
+	#aOt {position:absolute;top:58px;left:375px;display:none;}
+	.c {margin-left:290px;width: 150px;border: 1px solid #444;-moz-border-radius: 75px;-webkit-border-radius: 75px;border-radius: 75px;overflow: hidden;height:150px;}
+	#segment {height: 150px;margin-left: 103px;background-color: #42749F;width: 100px;border-left:2px dotted #000;}
+		#segment span {font-size:.7em;color:#fff;float:left;margin:4em 0 0 1em;}
+
+
+#demoOutput {font-size:.8em;}
+	#demoOutput table td {width:30%;vertical-align:top;padding: 2px 5px 0px 0px;}
+		#demoOutput table td.iter {width:10%;}
+	#demoOutput .h {width:250px;display:inline-block}
+	#demoOutput .lhs, #demoOutput .rhs {width:150px;display:inline-block;}

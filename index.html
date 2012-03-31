@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+	<meta charset='utf-8'>
+	<meta http-equiv='X-UA-Compatible' content='IE=Edge;chrome=1' >
+	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+	<meta NAME='AUTHOR' CONTENT='Shadi Isber'/>
+ 	<meta name='keywords' content='Circle segment, solution, problem, segment area, distance of overlap, angle' />
+ 	<meta name='description' content='Solving the two overlapping circle area and angle problem.' />
+
+	<title dir='ltr'>Solving the beer coaster problem</title>
+
+	<link rel='stylesheet' media='screen' href='css/the.css' >
+	<link href="css/prettify.css" type="text/css" rel="stylesheet" />
+	<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
+	<script type="text/javascript" src="js/prettify.js"></script>
+</head>
+<body dir='ltr' onload="prettyPrint()">
+	<div id='container'>
+		<h1>Beer Coaster Problem</h1>
+
+		<section id='problem'>
+			<h2>The problem</h2>
+			<p>
+				Let there be two circular beer coasters of equal area.  The two coasters
+				are moved on top of each other such that the area of the overlapping region
+				is half the area of any one of the coasters, as illustrated below:
+				<small>(Try hovering)</small>
+			</p>
+			<div class='animate center'>
+				<div id='c1'><div class='dot'>A</div></div>
+				<div id='c2'><div class='dot'>A</div></div>
+				<div id='aOt'>A/2</div>
+			</div>
+			<p>
+				Give an algorithm, with the usual desirable properties and expressed
+				as pseudocode, for solving the problem.  The solution will include
+				finding the  angle <em>a</em>, as illustrated in the following figure.
+			</p>
+			<div class='center'>
+				<img src='img/visual2.png' alt='What we need to find' />
+			</div>
+		</section>
+
+		<section id='solution'>
+			<h2>The solution</h2>
+			<ol>
+				<li>
+				If we consider just one circle, we can see that we need to find a segment of area 1/4 of the total area (figure 1) and multiply
+				that by two for the entire overlap area.  From there, maybe we can work backwards to get some information that will help us get to the angle.
+
+					<div class='center'>
+						<div class='c'>
+							<div id='segment'><span>A/4</span></div>
+						</div>
+						<caption>Figure 1</caption>
+					</div>
+				</li>
+
+				<li>
+				Wolfram Mathworld has an <a href='http://mathworld.wolfram.com/CircularSegment.html'>excellent explanation for
+				solving the area of a circular segment</a> which I won't go over again here, but the final formula boils down to:
+					<div class='center'>
+						<img src='img/formulaSegment.gif' alt='Formula for the area of a circular segment' style='margin:1.5em 0;'/>
+					</div>
+				</li>
+
+				<li>
+					Since we know that we are trying to find a circular segment equivalent to a quarter of the area of the circle, we can simply replace the 'A' in the LHS of the above formula with:<br />
+					<div class='center'>
+						A = 1/4  (&Pi; * R<sup>2</sup>)
+					</div>
+				</li>
+
+				<li>
+					Looking at the circular segment formula again with this new LHS value, we realize the <em>only unknown value is <u>h</u></em>, the maximum height of the segment.
+					Solving for <em>h</em> is not trivial, so I wrote a simple bruteforcer to find the value <a href='#program'>found below</a>.
+				</li>
+
+				<li>
+				Once <em>h</em> has been found, we can compute the length of half the chord (to find one side of the right-angled triangle.
+				<div class='center'>
+					chord = <img src='img/chordformula.gif' alt='formula for a chord in the circular segment' /><br />
+					<small>Half the chord is just the above without the leading '2'</small>
+					<br />
+					<img src='img/triangle2.png' />
+				</div>
+				</li>
+
+				<li>
+				As Figure 2 above shows, we now have half the length of the chord. The distance from the
+				chord to the center of the circle can be found with a subtraction: r-h.
+				</li>
+
+				<li>
+					Thinking back to high school trigonometry (<a href='http://www.mathwords.com/s/sohcahtoa.htm'>SOH
+					CAH TOA</a>), we can find the unknown angle using the TOA part. Then multiply it by two
+					to solve the problem.
+					<div class='center'>
+						Angle = 2 * atan( halfChord / r-h)
+					</div>
+				</li>
+
+				<li>
+					Now we rejoice.<br />
+					<strong>The angle is ~132degrees</strong>
+				</li>
+			</ol>
+		</section>
+
+		<section id='program'>
+			<h2>The program</h2>
+
+			<h3>Demo</h3>
+			<form id='demoForm'>
+				<label for='radius'>Enter the radius of the circles</label>
+				<input id='radius' type='text' name='radius' />
+				<button id='calculate'>Calculate</button>
+			</form>
+
+			<div id='demoOutput'></div>
+
+			<h3>Pseudocode</h3>
+			<pre>
+// Finds the angle between the two equal sides of an isoceles triangle
+// formed within a circular segment that has an area equal to 1/4<sup>th</sup> of the total circle's area
+
+// Input: Circle's radius (<a href='#analysis'>optional*</a>)
+// Output: the height of the triangle and the angle between the two equal sides
+
+r    <- user input radius
+RHS  <- 0
+LHS  <- (pi * r^2)/4
+step <- 1.0
+previousActionWasAdd <- true
+
+while RHS != LHS
+	if LHS > RHS
+		if (previousActionWasAdd)
+			height <- height + step
+		else
+			step <- step / 2
+			height <- height + step
+			previousActionWasAdd <- true
+
+	if LHS < RHS
+		if (previousActionWasAdd)
+			step <- step / 2
+			height <- height - step
+			previousActionWasAdd <- false
+		else
+			height <- height - step
+
+
+	// Calulcate the RHS based on the formula of a circular segment
+	RHS = ( r^2*arccos((r-height)/r) ) - ( (r-height)*sqrt(2*r*height - height^2) );
+
+// Now that we found the height, let's find the chord
+halfChord <- sqrt( height * (2*r - height));
+
+// Find r-h
+distanceToCenter <- r - height;
+
+// Find the angle times two
+angle <- 2 * arctan(halfChord / distanceToCenter);
+			</pre>
+
+			<h3>Actual code</h3>
+<pre class="prettyprint lang-js">
+function calculateAngle( radius ) {
+	$('#demoOutput').html(''); // clear from last run
+
+	// 1/4 of the area, rounded to 8 decimal places
+	var LHS = (Math.PI * Math.pow(radius, 2)) / 4
+	    LHS = round(LHS, 8);
+
+	var RHS = 0.0;
+	var height = 0.0;
+	var step = 1.0;
+	var previousActionWasAdd = true;
+	var iterator = 0;
+
+	$('#demoOutput').append("Brute forcing the height value");
+
+	// Brute force to find what value of h makes the LHS == RHS
+	while ( RHS != LHS ){
+
+		if (iterator++ > 100) // Shouldn't loop this long
+			break;
+
+		// If h is too small
+		if (LHS > RHS) {
+			// If we added previously don't change the step
+			if (previousActionWasAdd)
+				height += step;
+			// Otherwise, reduce the step by half and add it to h
+			else {
+				step /= 2;
+				height += step;
+				previousActionWasAdd = true;
+			}
+		// If h is too big
+		} else if ( LHS < RHS ) {
+			// If we added previous, reduce the step by half and subtract
+			if (previousActionWasAdd){
+				step /= 2;
+				height -= step;
+				previousActionWasAdd = false;
+			// Otherwise, subtract again
+			} else
+				height -= step;
+
+		}
+
+		// Calulcate the RHS based on the formula of a circular segment
+		RHS = Math.pow(radius,2) * Math.acos( (radius - height) / radius) -
+			( radius - height) * Math.sqrt(2*radius*height
+			- Math.pow(height, 2));
+
+		// Round it to 8 decimal places
+		RHS = round(RHS, 8);
+
+		// Log our work
+		$('#demoOutput').append('Iteration #'+iterator +
+					' - <span class="h">Height = ' +
+					height + '</span><span class="lhs">LHS = ' +
+					LHS+ '</span><span class="rhs">RHS = ' +
+					RHS + '</span>');
+	}
+
+	// Now that we found the h, let's find the chord
+	var halfChord = Math.sqrt( height * (2*radius - height));
+	$('#demoOutput').append("Half the Cord is: " + halfChord);
+
+	// Find r-h
+	var distanceToCenter = radius - height;
+	$('#demoOutput').append('radius - segmentHeight is: ' + distanceToCenter);
+
+	// Find the angle times two
+	var angle = 2 * Math.atan(halfChord / distanceToCenter);
+
+	$('#demoOutput').append("Answer is: " +
+			angle*(180/Math.PI) + " &deg;, or " +
+			angle + " radians.");
+}
+
+// This functions rounds a num to any given dec places
+function round(num, dec) {
+	return Math.round(num*Math.pow(10,dec))/Math.pow(10,dec);
+}
+</pre>
+
+		</section>
+
+		<section id='analysis'>
+			<h2>The Footer</h2>
+
+			<p>All the code for this can be found on my github here</p>
+
+		</section>
+
+
+	</div>
+
+
+	<script type="text/javascript" src="js/the.js"></script>
+</body>
+</html>
